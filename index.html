@@ -61,9 +61,11 @@
     })
 
     const app = Vue.createApp({})
-
     app.use(router)
     app.mount('#app')
+
+    const menu = Vue.createApp(Menu)
+    menu.mount('#menu')
   </script>
 
 </body>
