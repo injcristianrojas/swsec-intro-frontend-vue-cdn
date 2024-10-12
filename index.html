@@ -1,6 +1,6 @@
 <!doctype html>
 
-<html lang="en">
+<html lang="es">
 
 <head>
   <meta charset="utf-8">
@@ -12,6 +12,7 @@
 
   <script src="https://unpkg.com/vue@3"></script>
   <script src="https://unpkg.com/vue-router@4"></script>
+  <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
 
 </head>
 
@@ -50,7 +51,7 @@
 
     // define routes
     const routes = [
-      { path: '/', component: Home },
+      { path: '/', component: Login },
       { path: '/login', component: Login },
       { path: '/count', component: Count },
     ]
