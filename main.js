@@ -5,7 +5,7 @@ const eventBus = mitt();
 const Home = { template: '<div><h1>Home</h1><p>This is home page</p></div>' }
 const Login = {
     template: `
-        <form @submit.prevent="login">
+        <form @submit.prevent="login" ref="loginForm">
         <table>
             <tbody>
             <tr>
@@ -36,6 +36,7 @@ const Login = {
                 res => {
                     this.setToken(res.data.token);
                     eventBus.emit('toggleComponent', true);
+                    this.$refs.loginForm.reset();
                 }
             ).catch((error) => {
                 if (error.response) {
