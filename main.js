@@ -1,6 +1,9 @@
 const { createApp, ref, onMounted, onUnmounted } = Vue
 
+const JWTNAME = 'jwttoken'
+
 const eventBus = mitt();
+const jwtSet = str => localStorage.getItem(JWTNAME) !== null;
 
 const Home = { template: '<div><h1>Home</h1><p>This is home page</p></div>' }
 const Login = {
@@ -47,7 +50,7 @@ const Login = {
             });
         },
         setToken: function (token) {
-            localStorage.setItem('jwttoken', token);
+            localStorage.setItem(JWTNAME, token);
         }
     }
 }
@@ -55,13 +58,13 @@ const Menu = {
     template: `
         <ul v-if="isVisible">
             <li><a title="Home" id="home" href="#">Home</a></li><li>|</li>
-            <li><a title="Usuarios" id="users" href="#">Usuarios</a></li><li>|</li>
+            <li><a title="Usuarios" id="users" href="/#/users">Usuarios</a></li><li>|</li>
             <li><a title="Muro" id="wall" href="#">Muro</a></li><li>|</li>
-            <li><a title="Salir" id="exit" href="#" @click="hideComponent">Salir</a></li>
+            <li><a title="Salir" id="exit" href="#" @click="logOut">Salir</a></li>
         </ul>
     `,
     setup() {
-        const isVisible = ref(false)
+        const isVisible = ref(jwtSet)
 
         onMounted(() => {
             eventBus.on('toggleComponent', (visibility) => {
@@ -73,17 +76,18 @@ const Menu = {
             eventBus.off('toggleComponent');
         });
 
-        const hideComponent = () => {
+        const logOut = () => {
             eventBus.emit('toggleComponent', false);
+            localStorage.removeItem(JWTNAME);
         };
 
-        return { isVisible, hideComponent }
+        return { isVisible, logOut }
     }
 }
 
 const routes = [
     { path: '/', component: Login },
-    { path: '/login', component: Login },
+    { path: '/users', component: Home },
 ]
 
 const router = VueRouter.createRouter({
