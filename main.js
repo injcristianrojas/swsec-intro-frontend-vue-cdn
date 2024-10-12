@@ -1,4 +1,6 @@
-const { createApp, ref } = Vue
+const { createApp, ref, onMounted, onUnmounted } = Vue
+
+const eventBus = mitt();
 
 const Home = { template: '<div><h1>Home</h1><p>This is home page</p></div>' }
 const Login = {
@@ -33,6 +35,7 @@ const Login = {
             ).then(
                 res => {
                     this.setToken(res.data.token);
+                    eventBus.emit('toggleComponent', true);
                     //ReactDOM.render(<MenuLogged />, document.getElementById('menu'));
                     //ReactDOM.render(<Welcome />, document.getElementById('root'));
                 }
@@ -51,20 +54,35 @@ const Login = {
 }
 const Menu = {
     template: `
-        <ul>
+        <ul v-if="isVisible">
             <li><a title="Home" id="home" href="/">Home</a></li>
         </ul>
-    `
+    `,
+    setup() {
+        const isVisible = ref(false)
+
+        onMounted(() => {
+            eventBus.on('toggleComponent', (visibility) => {
+                isVisible.value = visibility;
+            });
+        });
+
+        onUnmounted(() => {
+            eventBus.off('toggleComponent');
+        });
+
+        return { isVisible }
+    }
 }
 
 const routes = [
-  { path: '/', component: Login },
-  { path: '/login', component: Login },
+    { path: '/', component: Login },
+    { path: '/login', component: Login },
 ]
 
 const router = VueRouter.createRouter({
-  history: VueRouter.createWebHashHistory(),
-  routes,
+    history: VueRouter.createWebHashHistory(),
+    routes,
 })
 
 const app = Vue.createApp({})
