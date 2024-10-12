@@ -1,3 +1,6 @@
+const { createApp, ref } = Vue
+
+const Home = { template: '<div><h1>Home</h1><p>This is home page</p></div>' }
 const Login = {
     template: `
         <form @submit.prevent="login">
@@ -46,4 +49,27 @@ const Login = {
         }
     }
 }
+const Menu = {
+    template: `
+        <ul>
+            <li><a title="Home" id="home" href="/">Home</a></li>
+        </ul>
+    `
+}
 
+const routes = [
+  { path: '/', component: Login },
+  { path: '/login', component: Login },
+]
+
+const router = VueRouter.createRouter({
+  history: VueRouter.createWebHashHistory(),
+  routes,
+})
+
+const app = Vue.createApp({})
+app.use(router)
+app.mount('#app')
+
+const menu = Vue.createApp(Menu)
+menu.mount('#menu')

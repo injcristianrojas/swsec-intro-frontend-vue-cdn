@@ -41,33 +41,7 @@
     </div>
   </div>
 
-  <script src="components/home.vue.js"></script>
-  <script src="components/login.vue.js"></script>
-  <script src="components/menu.vue.js"></script>
-  <script src="components/count.vue.js"></script>
-
-  <script>
-    const { createApp, ref } = Vue
-
-    // define routes
-    const routes = [
-      { path: '/', component: Login },
-      { path: '/login', component: Login },
-      { path: '/count', component: Count },
-    ]
-
-    const router = VueRouter.createRouter({
-      history: VueRouter.createWebHashHistory(),
-      routes,
-    })
-
-    const app = Vue.createApp({})
-    app.use(router)
-    app.mount('#app')
-
-    const menu = Vue.createApp(Menu)
-    menu.mount('#menu')
-  </script>
+  <script src="main.js"></script>
 
 </body>
 
