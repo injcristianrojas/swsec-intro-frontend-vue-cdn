@@ -36,8 +36,6 @@ const Login = {
                 res => {
                     this.setToken(res.data.token);
                     eventBus.emit('toggleComponent', true);
-                    //ReactDOM.render(<MenuLogged />, document.getElementById('menu'));
-                    //ReactDOM.render(<Welcome />, document.getElementById('root'));
                 }
             ).catch((error) => {
                 if (error.response) {
@@ -55,7 +53,10 @@ const Login = {
 const Menu = {
     template: `
         <ul v-if="isVisible">
-            <li><a title="Home" id="home" href="/">Home</a></li>
+            <li><a title="Home" id="home" href="#">Home</a></li><li>|</li>
+            <li><a title="Usuarios" id="users" href="#">Usuarios</a></li><li>|</li>
+            <li><a title="Muro" id="wall" href="#">Muro</a></li><li>|</li>
+            <li><a title="Salir" id="exit" href="#" @click="hideComponent">Salir</a></li>
         </ul>
     `,
     setup() {
@@ -71,7 +72,11 @@ const Menu = {
             eventBus.off('toggleComponent');
         });
 
-        return { isVisible }
+        const hideComponent = () => {
+            eventBus.emit('toggleComponent', false);
+        };
+
+        return { isVisible, hideComponent }
     }
 }
 
