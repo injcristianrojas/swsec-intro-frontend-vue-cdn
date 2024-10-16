@@ -88,22 +88,55 @@ const Menu = {
 }
 const Users = {
     template: `
-        <div>Am I a hacker</div>
+        <div>
+            <!-- Check if data is available -->
+            <div v-if="rows">
+                <!-- Iterate over the JSON object (array of objects) -->
+                <table>
+                    <thead>
+                        <tr>
+                            <th v-for="(header, index) in headers" :key="index">{{ header }}</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr v-for="(item, index) in rows" :key="index">
+                            <td>{{ item.username }}</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div v-else>
+                <p>Cargando información...</p>
+            </div>
+        </div>
     `,
-    setup() {
-        fetch('http://127.0.0.1:9000/api/v2/users/type/2', { method: "GET", headers: { "Authorization": `Bearer ${getToken()}` } })
-            .then(res => res.json())
-            .then(
-                (result) => {
-                    console.log(result)
-                },
-                // Note: it's important to handle errors here
-                // instead of a catch() block so that we don't swallow
-                // exceptions from actual bugs in components.
-                (error) => {
-                    console.log(error)
-                }
-            )
+    data() {
+        return {
+            headers: ['Usuarios'],
+            rows: []
+        }
+    },
+    mounted() {
+        this.fetchData()
+    },
+    methods: {
+        fetchData() {
+            fetch('http://127.0.0.1:9000/api/v2/users/type/2', { method: "GET", headers: { "Authorization": `Bearer ${getToken()}` } })
+                .then(res => res.json())
+                .then(
+                    (result) => {
+                        this.rows = result
+                        console.log(result)
+                    },
+                    // Note: it's important to handle errors here
+                    // instead of a catch() block so that we don't swallow
+                    // exceptions from actual bugs in components.
+                    (error) => {
+                        console.log(error)
+                    }
+                )
+        }
     }
 }
 
