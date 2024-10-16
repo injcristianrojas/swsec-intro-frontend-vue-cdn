@@ -61,7 +61,7 @@ const Menu = {
         <ul v-if="isVisible">
             <li><a title="Home" id="home" href="#">Home</a></li><li>|</li>
             <li><a title="Usuarios" id="users" href="/#/users">Usuarios</a></li><li>|</li>
-            <li><a title="Muro" id="wall" href="#">Muro</a></li><li>|</li>
+            <li><a title="Muro" id="wall" href="/#/wall">Muro</a></li><li>|</li>
             <li><a title="Salir" id="exit" href="#" @click="logOut">Salir</a></li>
         </ul>
     `,
@@ -122,7 +122,13 @@ const Users = {
     },
     methods: {
         fetchData() {
-            fetch('http://127.0.0.1:9000/api/v2/users/type/2', { method: "GET", headers: { "Authorization": `Bearer ${getToken()}` } })
+            fetch(
+                'http://127.0.0.1:9000/api/v2/users/type/2',
+                {
+                    method: "GET",
+                    headers: { "Authorization": `Bearer ${getToken()}` }
+                }
+            )
                 .then(res => res.json())
                 .then(
                     (result) => {
@@ -136,10 +142,92 @@ const Users = {
         }
     }
 }
+const Wall = {
+    template: `
+        <div>
+            <form @submit.prevent="postMessage">
+                <input type="text" ref="message" />
+                <input type="submit" value="Postear" />
+            </form>
+            <!-- Check if data is available -->
+            <div v-if="rows">
+                <!-- Iterate over the JSON object (array of objects) -->
+                <table>
+                    <thead>
+                        <tr>
+                            <th v-for="(header, index) in headers" :key="index">{{ header }}</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr v-for="(item, index) in rows" :key="index">
+                            <td>{{ item.message }}</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div v-else>
+                <p>Cargando información...</p>
+            </div>
+        </div>
+    `,
+    data() {
+        return {
+            headers: ['Mensajes'],
+            rows: [],
+        }
+    },
+    mounted() {
+        this.fetchData()
+    },
+    methods: {
+        fetchData() {
+            fetch(
+                'http://127.0.0.1:9000/api/v2/messages',
+                {
+                    method: "GET",
+                    headers: { "Authorization": `Bearer ${getToken()}` }
+                }
+            )
+                .then(res => res.json())
+                .then(
+                    (result) => {
+                        this.rows = result
+                        console.log(result)
+                    },
+                    (error) => {
+                        console.log(error)
+                    }
+                )
+        },
+        postMessage() {
+            axios.post(
+                'http://127.0.0.1:9000/api/v2/messages/add',
+                {
+                    'message': this.$refs.message.value
+                },
+                {
+                    headers: { "Authorization": `Bearer ${getToken()}` }
+                }
+            ).then(
+                res => {
+                    console.log(res)
+                    this.fetchData()
+                }
+            ).catch((error) => {
+                if (error.response) {
+                    console.log(error.response.data);
+                    console.log(error.response.status);
+                }
+            });
+        },
+    }
+}
 
 const routes = [
     { path: '/', component: Login },
     { path: '/users', component: Users },
+    { path: '/wall', component: Wall },
 ]
 
 const router = VueRouter.createRouter({
