@@ -3,9 +3,11 @@ const { createApp, ref, onMounted, onUnmounted } = Vue
 const JWTNAME = 'jwttoken'
 
 const eventBus = mitt();
-const jwtSet = str => localStorage.getItem(JWTNAME) !== null;
+const getToken = () => {
+    return localStorage.getItem(JWTNAME);
+}
+const jwtSet = () => getToken !== null;
 
-const Home = { template: '<div><h1>Home</h1><p>This is home page</p></div>' }
 const Login = {
     template: `
         <form @submit.prevent="login" ref="loginForm">
@@ -84,10 +86,30 @@ const Menu = {
         return { isVisible, logOut }
     }
 }
+const Users = {
+    template: `
+        <div>Am I a hacker</div>
+    `,
+    setup() {
+        fetch('http://127.0.0.1:9000/api/v2/users/type/2', { method: "GET", headers: { "Authorization": `Bearer ${getToken()}` } })
+            .then(res => res.json())
+            .then(
+                (result) => {
+                    console.log(result)
+                },
+                // Note: it's important to handle errors here
+                // instead of a catch() block so that we don't swallow
+                // exceptions from actual bugs in components.
+                (error) => {
+                    console.log(error)
+                }
+            )
+    }
+}
 
 const routes = [
     { path: '/', component: Login },
-    { path: '/users', component: Home },
+    { path: '/users', component: Users },
 ]
 
 const router = VueRouter.createRouter({
