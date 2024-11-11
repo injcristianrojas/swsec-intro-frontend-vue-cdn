@@ -160,7 +160,7 @@ const Wall = {
                     </thead>
                     <tbody>
                         <tr v-for="(item, index) in rows" :key="index">
-                            <td>{{ item.message }}</td>
+                            <td v-html="item.message"></td>
                         </tr>
                     </tbody>
                 </table>
