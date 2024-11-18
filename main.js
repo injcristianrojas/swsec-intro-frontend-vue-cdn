@@ -56,6 +56,7 @@ const Login = {
     }
   }
 }
+
 const Menu = {
   template: `
         <ul>
@@ -89,6 +90,7 @@ const Menu = {
     return { isVisible, logOut }
   }
 }
+
 const Users = {
   template: `
         <div>
@@ -145,6 +147,7 @@ const Users = {
     }
   }
 }
+
 const Wall = {
   template: `
         <div>
