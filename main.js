@@ -3,6 +3,7 @@ const { createApp, ref, onMounted, onUnmounted } = Vue
 const JWTNAME = 'jwttoken'
 
 const eventBus = mitt();
+
 const getToken = () => {
   return localStorage.getItem(JWTNAME);
 }
@@ -42,6 +43,7 @@ const Login = {
           this.setToken(res.data.token);
           eventBus.emit('toggleComponent', true);
           this.$refs.loginForm.reset();
+          this.$router.push('Welcome');
         }
       ).catch((error) => {
         if (error.response) {
@@ -59,16 +61,16 @@ const Login = {
 
 const Menu = {
   template: `
-        <ul>
-            <li><a title="Home" id="home" href="#">Home</a></li>
-            <span v-if="isVisible">
-              <li>|</li>
-              <li><a title="Usuarios" id="users" href="/#/users">Usuarios</a></li><li>|</li>
-              <li><a title="Muro" id="wall" href="/#/wall">Muro</a></li><li>|</li>
-              <li><a title="Salir" id="exit" href="#" @click="logOut">Salir</a></li>
-            </span>
-        </ul>
-    `,
+    <ul v-if="isVisible">
+      <li><a title="Home" id="home" href="/#/welcome">Home</a></li><li>|</li>
+      <li><a title="Usuarios" id="users" href="/#/users">Usuarios</a></li><li>|</li>
+      <li><a title="Muro" id="wall" href="/#/wall">Muro</a></li><li>|</li>
+      <li><a title="Salir" id="exit" href="#" @click="logOut">Salir</a></li>
+    </ul>
+    <ul v-else>
+      <li><a title="Welcome" id="welcome" href="/">Home</a></li>
+    </ul>
+  `,
   setup() {
     const isVisible = ref(jwtSet);
 
@@ -230,10 +232,17 @@ const Wall = {
   }
 }
 
+const Welcome = {
+  template: `
+    <p>Este es el sitio de Fans de Aves Chilenas. Bienvenido.</p>
+  `
+}
+
 const routes = [
   { path: '/', component: Login },
   { path: '/users', component: Users },
   { path: '/wall', component: Wall },
+  { path: '/welcome', component: Welcome },
 ]
 
 const router = VueRouter.createRouter({
