@@ -4,12 +4,12 @@ const JWTNAME = 'jwttoken'
 
 const eventBus = mitt();
 const getToken = () => {
-    return localStorage.getItem(JWTNAME);
+  return localStorage.getItem(JWTNAME);
 }
 const jwtSet = () => getToken !== null;
 
 const Login = {
-    template: `
+  template: `
         <form @submit.prevent="login" ref="loginForm">
         <table>
             <tbody>
@@ -29,65 +29,68 @@ const Login = {
         </table>
         </form>
     `,
-    methods: {
-        login: function () {
-            axios.post(
-                'http://127.0.0.1:9000/api/v2/login',
-                {
-                    username: this.$refs.username.value,
-                    password: this.$refs.password.value,
-                }
-            ).then(
-                res => {
-                    this.setToken(res.data.token);
-                    eventBus.emit('toggleComponent', true);
-                    this.$refs.loginForm.reset();
-                }
-            ).catch((error) => {
-                if (error.response) {
-                    console.log(error.response.data);
-                    console.log(error.response.status);
-                    alert('Error while logging in.')
-                }
-            });
-        },
-        setToken: function (token) {
-            localStorage.setItem(JWTNAME, token);
+  methods: {
+    login: function () {
+      axios.post(
+        'http://127.0.0.1:9000/api/v2/login',
+        {
+          username: this.$refs.username.value,
+          password: this.$refs.password.value,
         }
+      ).then(
+        res => {
+          this.setToken(res.data.token);
+          eventBus.emit('toggleComponent', true);
+          this.$refs.loginForm.reset();
+        }
+      ).catch((error) => {
+        if (error.response) {
+          console.log(error.response.data);
+          console.log(error.response.status);
+          alert('Error while logging in.')
+        }
+      });
+    },
+    setToken: function (token) {
+      localStorage.setItem(JWTNAME, token);
     }
+  }
 }
 const Menu = {
-    template: `
-        <ul v-if="isVisible">
-            <li><a title="Home" id="home" href="#">Home</a></li><li>|</li>
-            <li><a title="Usuarios" id="users" href="/#/users">Usuarios</a></li><li>|</li>
-            <li><a title="Muro" id="wall" href="/#/wall">Muro</a></li><li>|</li>
-            <li><a title="Salir" id="exit" href="#" @click="logOut">Salir</a></li>
+  template: `
+        <ul>
+            <li><a title="Home" id="home" href="#">Home</a></li>
+            <span v-if="isVisible">
+              <li>|</li>
+              <li><a title="Usuarios" id="users" href="/#/users">Usuarios</a></li><li>|</li>
+              <li><a title="Muro" id="wall" href="/#/wall">Muro</a></li><li>|</li>
+              <li><a title="Salir" id="exit" href="#" @click="logOut">Salir</a></li>
+            </span>
         </ul>
     `,
-    setup() {
-        const isVisible = ref(jwtSet)
+  setup() {
+    const isVisible = ref(jwtSet);
 
-        onMounted(() => {
-            eventBus.on('toggleComponent', (visibility) => {
-                isVisible.value = visibility;
-            });
-        });
+    onMounted(() => {
+      eventBus.on('toggleComponent', (visibility) => {
+        isVisible.value = visibility;
+      });
+    });
 
-        onUnmounted(() => {
-            eventBus.off('toggleComponent');
-        });
+    onUnmounted(() => {
+      eventBus.off('toggleComponent');
+    });
 
-        const logOut = () => {
-            eventBus.emit('toggleComponent', false);
-            localStorage.removeItem(JWTNAME);
-        };
+    const logOut = () => {
+      eventBus.emit('toggleComponent', false);
+      localStorage.removeItem(JWTNAME);
+    };
 
-        return { isVisible, logOut }
-    }
+    return { isVisible, logOut }
+  }
 }
 const Users = {
-    template: `
+  template: `
         <div>
             <!-- Check if data is available -->
             <div v-if="rows">
@@ -111,39 +114,39 @@ const Users = {
             </div>
         </div>
     `,
-    data() {
-        return {
-            headers: ['Usuarios'],
-            rows: []
-        }
-    },
-    mounted() {
-        this.fetchData()
-    },
-    methods: {
-        fetchData() {
-            fetch(
-                'http://127.0.0.1:9000/api/v2/users/type/2',
-                {
-                    method: "GET",
-                    headers: { "Authorization": `Bearer ${getToken()}` }
-                }
-            )
-                .then(res => res.json())
-                .then(
-                    (result) => {
-                        this.rows = result
-                        console.log(result)
-                    },
-                    (error) => {
-                        console.log(error)
-                    }
-                )
-        }
+  data() {
+    return {
+      headers: ['Usuarios'],
+      rows: []
     }
+  },
+  mounted() {
+    this.fetchData()
+  },
+  methods: {
+    fetchData() {
+      fetch(
+        'http://127.0.0.1:9000/api/v2/users/type/2',
+        {
+          method: "GET",
+          headers: { "Authorization": `Bearer ${getToken()}` }
+        }
+      )
+        .then(res => res.json())
+        .then(
+          (result) => {
+            this.rows = result
+            console.log(result)
+          },
+          (error) => {
+            console.log(error)
+          }
+        )
+    }
+  }
 }
 const Wall = {
-    template: `
+  template: `
         <div>
             <form @submit.prevent="postMessage">
                 <input type="text" ref="message" />
@@ -171,68 +174,68 @@ const Wall = {
             </div>
         </div>
     `,
-    data() {
-        return {
-            headers: ['Mensajes'],
-            rows: [],
-        }
-    },
-    mounted() {
-        this.fetchData()
-    },
-    methods: {
-        fetchData() {
-            fetch(
-                'http://127.0.0.1:9000/api/v2/messages',
-                {
-                    method: "GET",
-                    headers: { "Authorization": `Bearer ${getToken()}` }
-                }
-            )
-                .then(res => res.json())
-                .then(
-                    (result) => {
-                        this.rows = result
-                        console.log(result)
-                    },
-                    (error) => {
-                        console.log(error)
-                    }
-                )
-        },
-        postMessage() {
-            axios.post(
-                'http://127.0.0.1:9000/api/v2/messages/add',
-                {
-                    'message': this.$refs.message.value
-                },
-                {
-                    headers: { "Authorization": `Bearer ${getToken()}` }
-                }
-            ).then(
-                res => {
-                    console.log(res)
-                    this.fetchData()
-                }
-            ).catch((error) => {
-                if (error.response) {
-                    console.log(error.response.data);
-                    console.log(error.response.status);
-                }
-            });
-        },
+  data() {
+    return {
+      headers: ['Mensajes'],
+      rows: [],
     }
+  },
+  mounted() {
+    this.fetchData()
+  },
+  methods: {
+    fetchData() {
+      fetch(
+        'http://127.0.0.1:9000/api/v2/messages',
+        {
+          method: "GET",
+          headers: { "Authorization": `Bearer ${getToken()}` }
+        }
+      )
+        .then(res => res.json())
+        .then(
+          (result) => {
+            this.rows = result
+            console.log(result)
+          },
+          (error) => {
+            console.log(error)
+          }
+        )
+    },
+    postMessage() {
+      axios.post(
+        'http://127.0.0.1:9000/api/v2/messages/add',
+        {
+          'message': this.$refs.message.value
+        },
+        {
+          headers: { "Authorization": `Bearer ${getToken()}` }
+        }
+      ).then(
+        res => {
+          console.log(res)
+          this.fetchData()
+        }
+      ).catch((error) => {
+        if (error.response) {
+          console.log(error.response.data);
+          console.log(error.response.status);
+        }
+      });
+    },
+  }
 }
 
 const routes = [
-    { path: '/', component: Login },
-    { path: '/users', component: Users },
-    { path: '/wall', component: Wall },
+  { path: '/', component: Login },
+  { path: '/users', component: Users },
+  { path: '/wall', component: Wall },
 ]
 
 const router = VueRouter.createRouter({
-    history: VueRouter.createWebHashHistory(),
-    routes,
+  history: VueRouter.createWebHashHistory(),
+  routes,
 })
 
 const app = Vue.createApp({})
