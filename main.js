@@ -11,25 +11,25 @@ const jwtSet = () => getToken !== null;
 
 const Login = {
   template: `
-        <form @submit.prevent="login" ref="loginForm">
-        <table>
-            <tbody>
-            <tr>
-                <td>Usuario: </td>
-                <td><input type="text" ref="username" /></td>
-            </tr>
-            <tr>
-                <td>Password: </td>
-                <td><input type="password" ref="password" /></td>
-            </tr>
-            <tr>
-                <td>&nbsp;</td>
-                <td><input type="submit" name="submit" value="Ingresar" /></td>
-            </tr>
-            </tbody>
-        </table>
-        </form>
-    `,
+    <form @submit.prevent="login" ref="loginForm">
+      <table>
+        <tbody>
+        <tr>
+          <td>Usuario: </td>
+          <td><input type="text" ref="username" /></td>
+        </tr>
+        <tr>
+          <td>Password: </td>
+          <td><input type="password" ref="password" /></td>
+        </tr>
+        <tr>
+          <td>&nbsp;</td>
+          <td><input type="submit" name="submit" value="Ingresar" /></td>
+        </tr>
+        </tbody>
+      </table>
+    </form>
+  `,
   methods: {
     login: function () {
       axios.post(
@@ -95,28 +95,26 @@ const Menu = {
 
 const Users = {
   template: `
-        <div>
-            <!-- Check if data is available -->
-            <div v-if="rows">
-                <!-- Iterate over the JSON object (array of objects) -->
-                <table>
-                    <thead>
-                        <tr>
-                            <th v-for="(header, index) in headers" :key="index">{{ header }}</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr v-for="(item, index) in rows" :key="index">
-                            <td>{{ item.username }}</td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
+    <div>
+      <div v-if="rows">
+        <table>
+          <thead>
+            <tr>
+              <th v-for="(header, index) in headers" :key="index">{{ header }}</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr v-for="(item, index) in rows" :key="index">
+              <td>{{ item.username }}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
 
-            <div v-else>
-                <p>Cargando información...</p>
-            </div>
-        </div>
+      <div v-else>
+        <p>Cargando información...</p>
+      </div>
+    </div>
     `,
   data() {
     return {
@@ -152,33 +150,31 @@ const Users = {
 
 const Wall = {
   template: `
-        <div>
-            <form @submit.prevent="postMessage">
-                <input type="text" ref="message" />
-                <input type="submit" value="Postear" />
-            </form>
-            <!-- Check if data is available -->
-            <div v-if="rows">
-                <!-- Iterate over the JSON object (array of objects) -->
-                <table>
-                    <thead>
-                        <tr>
-                            <th v-for="(header, index) in headers" :key="index">{{ header }}</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr v-for="(item, index) in rows" :key="index">
-                            <td v-html="item.message"></td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
+  <div>
+    <form @submit.prevent="postMessage">
+      <input type="text" ref="message" />
+      <input type="submit" value="Postear" />
+    </form>
+    <div v-if="rows">
+      <table>
+        <thead>
+          <tr>
+            <th v-for="(header, index) in headers" :key="index">{{ header }}</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr v-for="(item, index) in rows" :key="index">
+            <td v-html="item.message"></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
 
-            <div v-else>
-                <p>Cargando información...</p>
-            </div>
-        </div>
-    `,
+    <div v-else>
+      <p>Cargando información...</p>
+    </div>
+  </div>
+  `,
   data() {
     return {
       headers: ['Mensajes'],
