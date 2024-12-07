@@ -234,6 +234,61 @@ const Welcome = {
   `
 }
 
+const HealthCheck = {
+  template: `
+    <div class="healthcheck">
+      <p>Estado del servicio: <span :class="statusClass">{{ statusMessage }}</span></p>
+    </div>
+  `,
+  data() {
+    return {
+      status: "unknown",
+    };
+  },
+  computed: {
+    statusMessage() {
+      switch (this.status) {
+        case "healthy":
+          return "Activo";
+        case "unhealthy":
+          return "Inactivo";
+        default:
+          return "Desconocido";
+      }
+    },
+    statusClass() {
+      return {
+        healthy: this.status === "healthy",
+        unhealthy: this.status === "unhealthy",
+        unknown: this.status === "unknown",
+      };
+    },
+  },
+  methods: {
+    async checkHealth() {
+      try {
+        const response = await fetch("http://127.0.0.1:9000/healthcheck");
+        this.status = response.ok ? "healthy" : "unhealthy";
+      } catch (error) {
+        this.status = "unhealthy";
+      }
+    },
+  },
+  mounted() {
+    this.checkHealth();
+    this.interval = setInterval(this.checkHealth, 30000);
+  },
+  beforeUnmount() {
+    clearInterval(this.interval);
+  },
+};
+
+Vue.createApp({
+  components: {
+    HealthCheck,
+  },
+})
+
 const routes = [
   { path: '/', component: Login },
   { path: '/users', component: Users },
@@ -252,3 +307,6 @@ app.mount('#app')
 
 const menu = Vue.createApp(Menu)
 menu.mount('#menu')
+
+const healthcheck = Vue.createApp(HealthCheck)
+healthcheck.mount("#healthcheck")
