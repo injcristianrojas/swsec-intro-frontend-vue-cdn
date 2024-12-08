@@ -152,7 +152,7 @@ const Wall = {
   template: `
   <div>
     <form @submit.prevent="postMessage">
-      <input type="text" ref="message" />
+      <input type="text" ref="message" size="70" />
       <input type="submit" value="Postear" />
     </form>
     <div v-if="rows">
@@ -164,7 +164,7 @@ const Wall = {
         </thead>
         <tbody>
           <tr v-for="(item, index) in rows" :key="index">
-            <td v-html="item.message"></td>
+            <td v-html="item.message">{{item.message}}</td>
           </tr>
         </tbody>
       </table>
